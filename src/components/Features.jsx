@@ -53,7 +53,7 @@ export default function Features() {
         <div className="relative text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
             Everything you need to{' '}
-            <span className="bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent opacity-70">
               dominate SEO
             </span>
           </h2>
