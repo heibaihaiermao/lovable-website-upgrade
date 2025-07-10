@@ -1,5 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
+import Logo from './Logo';
 
 export const Header = () => {
   const [workspaces, setWorkspaces] = useState([]);
@@ -36,10 +38,16 @@ export const Header = () => {
   return (
     <header className="w-full h-[87px] bg-white dark:bg-[#0d0e14] shadow-md transition-colors duration-300">
       <div className="max-w-7xl mx-auto h-full flex items-center justify-between px-6 sm:px-10">
-        {/* Logo or Title */}
-        <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white tracking-tight">
-          BlogForge
-        </h1>
+        {/* Logo */}
+        <div 
+          className="cursor-pointer transition-transform duration-300 hover:scale-105"
+          onClick={() => navigate('/')}
+        >
+          <Logo 
+            className="scale-90"
+            textClassName="text-gray-900 dark:text-white tracking-tight"
+          />
+        </div>
 
         {/* Right Controls */}
         <div className="flex items-center gap-4 relative">

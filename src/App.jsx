@@ -1,3 +1,4 @@
+
 import React from "react";
 import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router";
@@ -7,7 +8,10 @@ import Dashboard from './pages/Dashboard.jsx';
 import Calendar from './pages/Calendar.jsx';
 import Automations from './pages/Automations.jsx';
 import Branding from './pages/Branding.jsx';
-// import People from './pages/People.jsx';
+import MyAccount from './pages/MyAccount.jsx';
+import Solution from './pages/Solution.jsx';
+import Resources from './pages/Resources.jsx';
+import Pricing from './pages/Pricing.jsx';
 import ThemeToggle from './components/ThemeToggle.jsx';
 
 function App() {
@@ -20,7 +24,10 @@ function App() {
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/automations" element={<Automations />} />
           <Route path="/branding" element={<Branding />} />
-          {/*<Route path="/people" element={<People />} /> */}
+          <Route path="/myaccount" element={<MyAccount />} />
+          <Route path="/solution" element={<Solution />} />
+          <Route path="/resources" element={<Resources />} />
+          <Route path="/pricing" element={<Pricing />} />
           <Route path="/login" element={<Login_signup />} />
           <Route path="*" element={<Dashboard />} />
         </Routes>
