@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router';
+import Logo from './Logo';
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const menuRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     function onKeyDown(e) {
@@ -22,25 +25,41 @@ export default function Navbar() {
     return () => window.removeEventListener('mousedown', onClickOutside);
   }, [mobileMenuOpen]);
 
+  const navigationItems = [
+    { name: 'Solution', path: '/solution' },
+    { name: 'Resources', path: '/resources' },
+    { name: 'Pricing', path: '/pricing' }
+  ];
+
+  const handleNavigation = (path) => {
+    navigate(path);
+    setMobileMenuOpen(false);
+  };
+
   return (
     <>
       <nav className="fixed top-0 left-0 w-full bg-white text-violet-600 dark:bg-gradient-to-r dark:from-[#5b2eff] dark:to-[#3a0ca3] dark:text-white shadow-md dark:shadow-[0_4px_20px_rgba(91,46,255,0.35)] transition-colors duration-300 z-50">
         <div className="max-w-7xl mx-auto px-3 sm:px-5 md:px-8 py-4 flex items-center justify-between">
           {/* Left: Logo */}
-          <div className="flex-shrink-0 text-2xl sm:text-3xl md:text-3xl font-bold select-none cursor-pointer">
-            BlogForge
+          <div 
+            className="flex-shrink-0 cursor-pointer transition-transform duration-300 hover:scale-105"
+            onClick={() => navigate('/')}
+          >
+            <Logo 
+              textClassName="text-violet-600 dark:text-white"
+            />
           </div>
 
           {/* Center: Menu Links */}
           <div className="hidden md:flex flex-grow justify-center flex-wrap gap-4 sm:gap-6 md:gap-8 max-w-[600px]">
-            {['solution', 'resources', 'pricing'].map((item) => (
-              <a
-                key={item}
-                href={`#${item}`}
+            {navigationItems.map((item) => (
+              <button
+                key={item.name}
+                onClick={() => handleNavigation(item.path)}
                 className="text-sm sm:text-base md:text-lg hover:text-blue-600 dark:hover:text-violet-400 dark:hover:drop-shadow-[0_0_6px_rgba(139,92,246,0.7)] transition-colors duration-300 whitespace-nowrap"
               >
-                {item.charAt(0).toUpperCase() + item.slice(1)}
-              </a>
+                {item.name}
+              </button>
             ))}
           </div>
 
@@ -48,11 +67,12 @@ export default function Navbar() {
           <div className="hidden md:flex flex-shrink-0 items-center gap-3 sm:gap-5 md:gap-6">
             <button
               className="text-sm sm:text-base md:text-lg hover:text-blue-600 dark:hover:text-violet-400 dark:hover:drop-shadow-[0_0_6px_rgba(139,92,246,0.7)] transition-colors duration-300 whitespace-nowrap"
-              onClick={() => (window.location.href = '/login')}
+              onClick={() => navigate('/login')}
             >
               Login
             </button>
             <button
+              onClick={() => navigate('/dashboard')}
               className="text-sm sm:text-base md:text-lg font-semibold bg-gradient-to-r from-violet-500 to-blue-500 text-white px-4 sm:px-6 md:px-8 py-2 sm:py-3 rounded-xl hover:brightness-110 dark:hover:brightness-90 dark:hover:filter transition-all duration-300 whitespace-nowrap"
             >
               Get Started
@@ -94,27 +114,23 @@ export default function Navbar() {
           ${mobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-[-100%] opacity-0 pointer-events-none'}
         `}
       >
-        {['solution', 'resources', 'pricing'].map((item) => (
-          <a
-            key={item}
-            href={`#${item}`}
-            onClick={() => setMobileMenuOpen(false)}
+        {navigationItems.map((item) => (
+          <button
+            key={item.name}
+            onClick={() => handleNavigation(item.path)}
             className="hover:text-blue-600 dark:hover:text-white transition-colors duration-200"
           >
-            {item.charAt(0).toUpperCase() + item.slice(1)}
-          </a>
+            {item.name}
+          </button>
         ))}
         <button
-          onClick={() => {
-            setMobileMenuOpen(false);
-            window.location.href = '/login';
-          }}
+          onClick={() => handleNavigation('/login')}
           className="hover:text-blue-600 dark:hover:text-white transition-colors duration-200"
         >
           Login
         </button>
         <button
-          onClick={() => setMobileMenuOpen(false)}
+          onClick={() => handleNavigation('/dashboard')}
           className="font-semibold bg-gradient-to-r from-violet-500 to-blue-500 text-white px-12 py-4 rounded-xl hover:brightness-110 transition-all duration-300"
         >
           Get Started
