@@ -1,0 +1,82 @@
+import React, { useState } from 'react';
+import { Header } from '../components/Header.jsx';
+import { NavigationTabs } from '../components/NavigationTabs.jsx';
+import { InviteUserForm } from '../components/InviteUserForm.jsx';
+import { TeamMembersTable } from '../components/TeamMembersTable.jsx';
+
+const People = () => {
+  const [teamMembers, setTeamMembers] = useState([
+    {
+      id: 1,
+      email: 'alex@example.com',
+      name: 'Alex',
+      role: 'Owner',
+    },
+    {
+      id: 2,
+      email: 'bob@example.com',
+      name: 'Bob',
+      role: 'Editor',
+    },
+    {
+      id: 3,
+      email: 'charlie@example.com',
+      name: 'Charlie',
+      role: 'Viewer',
+    },
+  ]);
+
+  const handleRoleChange = (id, newRole) => {
+    setTeamMembers(prev => 
+      prev.map(member => 
+        member.id === id ? { ...member, role: newRole } : member
+      )
+    );
+  };
+
+  const handleRemoveMember = (id) => {
+    setTeamMembers(prev => prev.filter(member => member.id !== id));
+  };
+
+  const handleInviteUser = (email, name, role) => {
+    const newMember = {
+      id: Date.now(),
+      email,
+      name,
+      role,
+    };
+    setTeamMembers(prev => [...prev, newMember]);
+  };
+
+  return (
+    <div className="w-full min-h-screen bg-gray-100 dark:bg-[#121524] text-gray-800 dark:text-white transition-colors duration-300">
+      <div className="relative z-20">
+        <Header />
+      </div>
+      <div className="relative z-10">
+        <NavigationTabs />
+      </div>
+
+      <div className="mt-10 px-6">
+        <div className="bg-white dark:bg-gray-800 text-gray-800 dark:text-white p-8 rounded-2xl shadow-md transition-colors duration-300 min-h-[600px]">
+          <h1 className="text-2xl font-bold mb-2">Team Members & Permissions</h1>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+            Invite virtual assistants, writers, or collaborators to your workspaces. Each user can be assigned a role:
+          </p>
+
+          <TeamMembersTable 
+            members={teamMembers}
+            onRoleChange={handleRoleChange}
+            onRemoveMember={handleRemoveMember}
+          />
+
+          <div className="mt-8">
+            <InviteUserForm onInvite={handleInviteUser} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default People;
