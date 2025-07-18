@@ -6,6 +6,7 @@ const tabs = [
   { id: 'calendar', label: 'Calendar' },
   { id: 'automations', label: 'Automations' },
   { id: 'branding', label: 'Branding' },
+  { id: 'content-strategy', label: 'Content Strategy' },
   { id: 'people', label: 'People' }
 ];
 

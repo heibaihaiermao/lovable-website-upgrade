@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard.jsx';
 import Calendar from './pages/Calendar.jsx';
 import Automations from './pages/Automations.jsx';
 import Branding from './pages/Branding.jsx';
+import ContentStrategy from './pages/ContentStrategy.jsx';
 import People from './pages/People.jsx';
 import MyAccount from './pages/MyAccount.jsx';
 import Solution from './pages/Solution.jsx';
@@ -26,6 +27,7 @@ function App() {
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/automations" element={<Automations />} />
           <Route path="/branding" element={<Branding />} />
+          <Route path="/content-strategy" element={<ContentStrategy />} />
           <Route path="/people" element={<People />} />
           <Route path="/myaccount" element={<MyAccount />} />
           <Route path="/solution" element={<Solution />} />
