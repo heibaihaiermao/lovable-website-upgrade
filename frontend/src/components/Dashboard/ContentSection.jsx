@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BlogTable } from './BlogTable';
+import { getCurrentWorkspace, getWorkspaceData } from '../../utils/workspaceManager';
 
 export const ContentSection = ({ onSearchBlogs, onBlogClick }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -7,46 +8,16 @@ export const ContentSection = ({ onSearchBlogs, onBlogClick }) => {
   const [filteredBlogs, setFilteredBlogs] = useState([]);
 
   useEffect(() => {
-    // Simulate fetching from backend
-    // Assuming blog entries in similar format as:
-    // [
-    //     {
-    //         "id": "1",
-    //         "title": "Blog Title",
-    //         "seoScore": 95,
-    //         "dateCreated": "06/18/2025"
-    //     },
-    //     ...
-    // ]
-    const fetchBlogs = async () => {
-      try {
-        const response = await fetch('/api/blogs'); // replace with real API
-        const data = await response.json();
-        setBlogs(data);
-        setFilteredBlogs(data);
-      } catch (error) {
-        console.error('Failed to fetch blogs:', error);
-        setBlogs([
-          {
-            "id": "1",
-            "title": "Blog Title",
-            "seoScore": 95,
-            "dateCreated": "06/18/2025"
-          }
-        ]); // fallback
-
-        setFilteredBlogs([
-          {
-            "id": "1",
-            "title": "Blog Title",
-            "seoScore": 95,
-            "dateCreated": "06/18/2025"
-          }
-        ]);
-      }
-    };
-
-    fetchBlogs();
+    // Load workspace-specific blogs
+    const currentWorkspace = getCurrentWorkspace();
+    if (currentWorkspace) {
+      const workspaceBlogs = getWorkspaceData(currentWorkspace.id, 'blogs') || [];
+      setBlogs(workspaceBlogs);
+      setFilteredBlogs(workspaceBlogs);
+    } else {
+      setBlogs([]);
+      setFilteredBlogs([]);
+    }
   }, []);
 
   const handleSearch = (e) => {

@@ -3,12 +3,21 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import Logo from './Logo';
 import { useAuth } from '../contexts/AuthContext';
+import { AddWorkspaceModal } from './AddWorkspaceModal';
+import { 
+  getWorkspaces, 
+  getCurrentWorkspace, 
+  setCurrentWorkspace, 
+  addWorkspace, 
+  initializeWorkspaces 
+} from '../utils/workspaceManager';
 
 export const Header = () => {
   const [workspaces, setWorkspaces] = useState([]);
-  const [selectedWorkspace, setSelectedWorkspace] = useState('');
+  const [selectedWorkspace, setSelectedWorkspace] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [isAddWorkspaceModalOpen, setIsAddWorkspaceModalOpen] = useState(false);
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
 
@@ -22,20 +31,17 @@ export const Header = () => {
   };
 
   useEffect(() => {
-    async function fetchWorkspaces() {
-      try {
-        const response = await fetch('/api/workspaces');
-        const data = await response.json();
-        setWorkspaces(data);
-        setSelectedWorkspace(data[0] || '');
-      } catch (error) {
-        console.error('Failed to fetch workspaces:', error);
-        setWorkspaces(['Workspace 1', 'Workspace 2', 'Workspace 3']);
-        setSelectedWorkspace('Workspace 1');
-      }
+    // Initialize workspaces and load current workspace
+    const loadedWorkspaces = initializeWorkspaces();
+    setWorkspaces(loadedWorkspaces);
+    
+    const currentWorkspace = getCurrentWorkspace();
+    if (currentWorkspace && loadedWorkspaces.find(ws => ws.id === currentWorkspace.id)) {
+      setSelectedWorkspace(currentWorkspace);
+    } else if (loadedWorkspaces.length > 0) {
+      setSelectedWorkspace(loadedWorkspaces[0]);
+      setCurrentWorkspace(loadedWorkspaces[0]);
     }
-
-    fetchWorkspaces();
   }, []);
 
   // Close dropdowns when clicking outside
@@ -53,11 +59,23 @@ export const Header = () => {
 
   const handleSelect = (workspace) => {
     if (workspace === '+ New Workspace') {
-      console.log('Trigger new workspace flow');
+      setIsAddWorkspaceModalOpen(true);
     } else {
       setSelectedWorkspace(workspace);
+      setCurrentWorkspace(workspace);
     }
     setDropdownOpen(false);
+  };
+
+  const handleAddWorkspace = (name) => {
+    const newWorkspace = addWorkspace(name);
+    const updatedWorkspaces = getWorkspaces();
+    setWorkspaces(updatedWorkspaces);
+    setSelectedWorkspace(newWorkspace);
+    setCurrentWorkspace(newWorkspace);
+    
+    // Navigate to dashboard to show empty state
+    navigate('/dashboard');
   };
 
   return (
@@ -82,7 +100,7 @@ export const Header = () => {
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className="text-sm sm:text-base font-medium text-gray-900 dark:text-white bg-gray-200 dark:bg-gray-800 px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
             >
-              {selectedWorkspace}
+              {selectedWorkspace?.name || 'Select Workspace'}
               <svg
                 width="14"
                 height="8"
@@ -99,11 +117,11 @@ export const Header = () => {
               <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 transition-all">
                 {workspaces.map((workspace) => (
                   <div
-                    key={workspace}
+                    key={workspace.id}
                     onClick={() => handleSelect(workspace)}
                     className="px-4 py-2 text-sm text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
                   >
-                    {workspace}
+                    {workspace.name}
                   </div>
                 ))}
                 <div className="border-t border-gray-200 dark:border-gray-600 my-1" />
@@ -172,6 +190,13 @@ export const Header = () => {
           </div>
         </div>
       </div>
+      
+      <AddWorkspaceModal
+        isOpen={isAddWorkspaceModalOpen}
+        onClose={() => setIsAddWorkspaceModalOpen(false)}
+        onSubmit={handleAddWorkspace}
+        existingWorkspaces={workspaces}
+      />
     </header>
   );
 };

@@ -2,27 +2,34 @@ import React, { useState, useEffect } from 'react';
 import { Header } from '../components/Header.jsx';
 import { NavigationTabs } from '../components/NavigationTabs.jsx';
 import { ContentStrategyForm } from '../components/ContentStrategyForm.jsx';
+import { getCurrentWorkspace, getWorkspaceData, setWorkspaceData } from '../utils/workspaceManager';
 
 const ContentStrategy = () => {
   const [formData, setFormData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Load existing data from localStorage
-    const savedData = localStorage.getItem('contentStrategyData');
-    if (savedData) {
-      setFormData(JSON.parse(savedData));
+    // Load workspace-specific content strategy data
+    const currentWorkspace = getCurrentWorkspace();
+    if (currentWorkspace) {
+      const savedData = getWorkspaceData(currentWorkspace.id, 'contentStrategy');
+      if (savedData) {
+        setFormData(savedData);
+      }
     }
     setIsLoading(false);
   }, []);
 
   const handleFormSubmit = (data) => {
-    // Save to localStorage (mock database)
-    localStorage.setItem('contentStrategyData', JSON.stringify(data));
+    // Save to workspace-specific data
+    const currentWorkspace = getCurrentWorkspace();
+    if (currentWorkspace) {
+      setWorkspaceData(currentWorkspace.id, 'contentStrategy', data);
+    }
     setFormData(data);
     
     // Mock API call
-    console.log('Content Strategy Data submitted:', data);
+    console.log('Content Strategy Data for workspace:', currentWorkspace?.name, data);
     
     // Show success message
     alert('Content Strategy saved successfully!');

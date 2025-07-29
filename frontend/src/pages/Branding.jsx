@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from '../components/Header.jsx';
 import { NavigationTabs } from '../components/NavigationTabs.jsx';
+import { getCurrentWorkspace, getWorkspaceData } from '../utils/workspaceManager';
 import Logo from '../components/Logo.jsx';
 import { Edit, Settings, Users, Target, Calendar, FileText, MessageCircle } from 'lucide-react';
 
@@ -8,10 +9,13 @@ const Branding = () => {
   const [contentStrategy, setContentStrategy] = useState(null);
 
   useEffect(() => {
-    // Load content strategy data from localStorage
-    const savedData = localStorage.getItem('contentStrategyData');
-    if (savedData) {
-      setContentStrategy(JSON.parse(savedData));
+    // Load workspace-specific content strategy data
+    const currentWorkspace = getCurrentWorkspace();
+    if (currentWorkspace) {
+      const savedData = getWorkspaceData(currentWorkspace.id, 'contentStrategy');
+      if (savedData) {
+        setContentStrategy(savedData);
+      }
     }
   }, []);
 

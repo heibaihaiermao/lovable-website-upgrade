@@ -1,41 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from '../components/Header.jsx';
 import { NavigationTabs } from '../components/NavigationTabs.jsx';
 import { InviteUserForm } from '../components/InviteUserForm.jsx';
 import { TeamMembersTable } from '../components/TeamMembersTable.jsx';
+import { getCurrentWorkspace, getWorkspaceData, setWorkspaceData } from '../utils/workspaceManager';
 
 const People = () => {
-  const [teamMembers, setTeamMembers] = useState([
-    {
-      id: 1,
-      email: 'alex@example.com',
-      name: 'Alex',
-      role: 'Owner',
-    },
-    {
-      id: 2,
-      email: 'bob@example.com',
-      name: 'Bob',
-      role: 'Editor',
-    },
-    {
-      id: 3,
-      email: 'charlie@example.com',
-      name: 'Charlie',
-      role: 'Viewer',
-    },
-  ]);
+  const [teamMembers, setTeamMembers] = useState([]);
+
+  // Load workspace-specific team members
+  useEffect(() => {
+    const currentWorkspace = getCurrentWorkspace();
+    if (currentWorkspace) {
+      const workspaceMembers = getWorkspaceData(currentWorkspace.id, 'teamMembers') || [];
+      setTeamMembers(workspaceMembers);
+    }
+  }, []);
+
+  // Save team members when they change
+  const updateTeamMembers = (newMembers) => {
+    setTeamMembers(newMembers);
+    const currentWorkspace = getCurrentWorkspace();
+    if (currentWorkspace) {
+      setWorkspaceData(currentWorkspace.id, 'teamMembers', newMembers);
+    }
+  };
 
   const handleRoleChange = (id, newRole) => {
-    setTeamMembers(prev => 
-      prev.map(member => 
-        member.id === id ? { ...member, role: newRole } : member
-      )
+    const updatedMembers = teamMembers.map(member => 
+      member.id === id ? { ...member, role: newRole } : member
     );
+    updateTeamMembers(updatedMembers);
   };
 
   const handleRemoveMember = (id) => {
-    setTeamMembers(prev => prev.filter(member => member.id !== id));
+    const updatedMembers = teamMembers.filter(member => member.id !== id);
+    updateTeamMembers(updatedMembers);
   };
 
   const handleInviteUser = (email, name, role) => {
@@ -45,7 +45,7 @@ const People = () => {
       name,
       role,
     };
-    setTeamMembers(prev => [...prev, newMember]);
+    updateTeamMembers([...teamMembers, newMember]);
   };
 
   return (

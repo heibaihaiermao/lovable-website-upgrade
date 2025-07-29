@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from '../components/Header.jsx';
 import { NavigationTabs } from '../components/NavigationTabs.jsx';
+import { getCurrentWorkspace, getWorkspaceData, setWorkspaceData } from '../utils/workspaceManager';
 
 const Toggle = ({ checked, onChange }) => (
   <label className="relative inline-block w-11 h-6 cursor-pointer">
@@ -17,20 +18,36 @@ const Toggle = ({ checked, onChange }) => (
 
 const Automations = () => {
   const [toggles, setToggles] = useState({
-    wordpress: true,
+    wordpress: false,
     netlify: false,
     wix: false,
     webflow: false,
-    facebook: true,
+    facebook: false,
     instagram: false,
     pinterest: false,
-    substack: true,
+    substack: false,
     medium: false,
     linkedin: false,
   });
 
+  // Load workspace-specific automation settings
+  useEffect(() => {
+    const currentWorkspace = getCurrentWorkspace();
+    if (currentWorkspace) {
+      const workspaceAutomations = getWorkspaceData(currentWorkspace.id, 'automations') || {};
+      setToggles(prev => ({ ...prev, ...workspaceAutomations }));
+    }
+  }, []);
+
   const handleToggle = (key) => {
-    setToggles((prev) => ({ ...prev, [key]: !prev[key] }));
+    const newToggles = { ...toggles, [key]: !toggles[key] };
+    setToggles(newToggles);
+    
+    // Save to workspace data
+    const currentWorkspace = getCurrentWorkspace();
+    if (currentWorkspace) {
+      setWorkspaceData(currentWorkspace.id, 'automations', newToggles);
+    }
   };
 
   return (

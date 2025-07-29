@@ -2,6 +2,7 @@ import React from 'react';
 import { Header } from '../components/Header.jsx';
 import { NavigationTabs } from '../components/NavigationTabs.jsx';
 import AddEventModal from '../components/AddEventModal.jsx';
+import { getCurrentWorkspace, getWorkspaceData, setWorkspaceData } from '../utils/workspaceManager';
 
 const generateCalendarDays = (year, month) => {
   const firstDayOfMonth = new Date(year, month, 1).getDay();
@@ -62,6 +63,24 @@ const Calendar = () => {
   });
 
   const [events, setEvents] = React.useState([]);
+
+  // Load workspace-specific events
+  React.useEffect(() => {
+    const currentWorkspace = getCurrentWorkspace();
+    if (currentWorkspace) {
+      const workspaceEvents = getWorkspaceData(currentWorkspace.id, 'events') || [];
+      setEvents(workspaceEvents);
+    }
+  }, []);
+
+  // Save events when they change
+  const updateEvents = (newEvents) => {
+    setEvents(newEvents);
+    const currentWorkspace = getCurrentWorkspace();
+    if (currentWorkspace) {
+      setWorkspaceData(currentWorkspace.id, 'events', newEvents);
+    }
+  };
   const [showEventModal, setShowEventModal] = React.useState(false);
   const [newEventTitle, setNewEventTitle] = React.useState('');
   const [selectedTags, setSelectedTags] = React.useState([]);
@@ -275,7 +294,7 @@ const Calendar = () => {
         isOpen={showEventModal}
         onClose={() => setShowEventModal(false)}
         onSave={(event) => {
-          setEvents([...events, event]);
+          updateEvents([...events, event]);
           setShowEventModal(false);
         }}
         defaultDate={selectedDate}
