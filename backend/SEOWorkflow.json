@@ -1,0 +1,106 @@
+{
+  "name": "SEOWorkflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "seo-blog",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "9ef6269e-5341-43d1-8d71-96dbe75034a3",
+      "name": "Receive Chat Message",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        180,
+        -100
+      ],
+      "webhookId": "db1c6b92-08fb-4c8e-a179-0054bcf05e34"
+    },
+    {
+      "parameters": {
+        "resource": "completion",
+        "requestOptions": {}
+      },
+      "id": "c23e8254-f4a0-47bb-8a2b-06cbe0164dbe",
+      "name": "Generate SEO Blog (OpenAI)",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        480,
+        -100
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "c178eb8e-c6ed-4816-a9e6-8042e852ed13",
+      "name": "Create Google Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 1,
+      "position": [
+        780,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "e46ffa29-2430-40b8-b2d2-80162a77739f",
+      "name": "Respond with Doc Link",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        1080,
+        -100
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Receive Chat Message": {
+      "main": [
+        [
+          {
+            "node": "Generate SEO Blog (OpenAI)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate SEO Blog (OpenAI)": {
+      "main": [
+        [
+          {
+            "node": "Create Google Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Google Doc": {
+      "main": [
+        [
+          {
+            "node": "Respond with Doc Link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fe6e428f-ed9f-46d4-86bc-bea4dcb06a9f",
+  "meta": {
+    "instanceId": "2df39a6cd4e311f5991ac8d2f07d96dec109410ac9b49445ba356c53f8d81a50"
+  },
+  "id": "tn61bKhoO4nsZAHc",
+  "tags": []
+}
